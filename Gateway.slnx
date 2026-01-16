@@ -1,0 +1,15 @@
+﻿<Solution>
+  <Folder Name="/src/">
+    <Project Path="src\Gateway\Gateway.csproj" Type="Classic C#" />
+      <Project Path="src\Infrastructure\Infrastructure.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/src/Application/">
+    <Project Path="src\Application\Gateway.Application.Contracts\Gateway.Application.Contracts.csproj" Type="Classic C#" />
+    <Project Path="src\Application\Gateway.Application.Models\Gateway.Application.Models.csproj" Type="Classic C#" />
+    <Project Path="src\Application\Gateway.Application\Gateway.Application.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/src/Presentation/">
+    <Project Path="src\Presentation\Grpc\Grpc.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>
