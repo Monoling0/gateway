@@ -1,54 +1,55 @@
-using Gateway.Application.Contracts.Operations;
+using Gateway.Application.Contracts.Requests.Users;
+using Gateway.Application.Contracts.Responses.Users;
 
 namespace Gateway.Application.Contracts;
 
 public interface IAccountService
 {
-    Task<RegisterStudent.Response> RegisterStudent(
-        RegisterStudent.Request request,
+    Task<RegisterStudentGatewayResponse> RegisterStudent(
+        RegisterStudentGatewayRequest request,
         CancellationToken cancellationToken);
 
-    Task<AddCreator.Response> AddCreator(
-        AddCreator.Request request,
+    Task<AddCreatorGatewayResponse> AddCreator(
+        AddCreatorGatewayRequest request,
         CancellationToken cancellationToken);
 
     Task CreateSubscription(
-        CreateSubscription.Request request,
+        CreateSubscriptionGatewayRequest request,
         CancellationToken cancellationToken);
 
     Task<bool> ExistsAccount(
         long accountId,
         CancellationToken cancellationToken);
 
-    Task<GetAccount.Response> GetAccount(
+    Task<GetAccountGatewayResponse> GetAccount(
         long accountId,
         CancellationToken cancellationToken);
 
-    Task<GetStudentProfileData.Response> GetStudentProfileData(
+    Task<GetStudentProfileDataGatewayResponse> GetStudentProfileData(
         long accountId,
         CancellationToken cancellationToken);
 
-    Task<GetPasswordHash.Response> GetPasswordHash(
+    Task<GetPasswordHashGatewayResponse> GetPasswordHash(
         long passwordId,
         CancellationToken cancellationToken);
 
-    Task<GetAllAccounts.Response> GetAllAccounts(
-        GetAllAccounts.Request request,
+    Task<GetAllAccountsGatewayResponse> GetAllAccounts(
+        GetAllAccountsGatewayRequest request,
         CancellationToken cancellationToken);
 
-    Task<GetAllStudentProfiles.Response> GetAllStudentProfiles(
-        GetAllStudentProfiles.Request request,
+    Task<GetAllStudentProfilesGatewayResponse> GetAllStudentProfiles(
+        GetAllStudentProfilesGatewayRequest request,
         CancellationToken cancellationToken);
 
-    Task<GetFollowers.Response> GetFollowers(
-        GetFollowers.Request request,
+    Task<GetFollowersGatewayResponse> GetFollowers(
+        GetFollowersGatewayRequest request,
         CancellationToken cancellationToken);
 
-    Task<UpdateAccount.Response> UpdateAccount(
-        UpdateAccount.Request request,
+    Task UpdateAccount(
+        UpdateAccountGatewayRequest request,
         CancellationToken cancellationToken);
 
-    Task<UpdateStudentProfile.Response> UpdateStudentProfile(
-        UpdateStudentProfile.Request request,
+    Task UpdateStudentProfile(
+        UpdateStudentProfileGatewayRequest request,
         CancellationToken cancellationToken);
 }

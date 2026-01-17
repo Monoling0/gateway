@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="../../Presentation/Grpc/protos/accounts.proto" GrpcServices="Client"/>
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Google.Protobuf" />
       <PackageReference Include="Grpc.AspNetCore" />
       <PackageReference Include="Grpc.Net.Client" />
@@ -23,6 +19,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Gateway.Application.Contracts\Gateway.Application.Contracts.csproj" />
+      <ProjectReference Include="..\Gateway.Common\Gateway.Common.csproj" />
     </ItemGroup>
 
 </Project>

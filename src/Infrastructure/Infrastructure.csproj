@@ -16,4 +16,8 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Application\Gateway.Application.Models\Gateway.Application.Models.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -11,7 +11,10 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddSwagger(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddEndpointsApiExplorer();
-        serviceCollection.AddSwaggerGen();
+        serviceCollection.AddSwaggerGen(c =>
+        {
+            c.CustomSchemaIds(type => type.FullName);
+        });
         serviceCollection.ConfigureSwaggerGen(opt =>
         {
             opt.UseOneOfForPolymorphism();

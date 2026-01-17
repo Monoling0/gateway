@@ -1,7 +1,9 @@
 using Accounts.UserService.Contracts;
 using Gateway.Application.Contracts;
-using Gateway.Application.Contracts.Operations;
+using Gateway.Application.Contracts.Requests.Users;
+using Gateway.Application.Contracts.Responses.Users;
 using Gateway.Application.Extensions;
+using GrpcIds = Accounts.UserService.Contracts.Ids;
 using GrpcUserService = Accounts.UserService.Contracts.UserService;
 using PageToken = Gateway.Application.Models.Common.PageToken;
 
@@ -16,8 +18,8 @@ public class AccountService : IAccountService
         _userServiceClient = userServiceClient;
     }
 
-    public async Task<RegisterStudent.Response> RegisterStudent(
-        RegisterStudent.Request request,
+    public async Task<RegisterStudentGatewayResponse> RegisterStudent(
+        RegisterStudentGatewayRequest request,
         CancellationToken cancellationToken)
     {
         var grpcRequest = new RegisterStudentRequest
@@ -33,12 +35,14 @@ public class AccountService : IAccountService
                 grpcRequest,
                 cancellationToken: cancellationToken);
 
-        var response = new RegisterStudent.Response(grpcResponse.AccountId);
+        var response = new RegisterStudentGatewayResponse(grpcResponse.AccountId);
 
         return response;
     }
 
-    public async Task<AddCreator.Response> AddCreator(AddCreator.Request request, CancellationToken cancellationToken)
+    public async Task<AddCreatorGatewayResponse> AddCreator(
+        AddCreatorGatewayRequest request,
+        CancellationToken cancellationToken)
     {
         var grpcRequest = new AddCreatorRequest
         {
@@ -51,12 +55,12 @@ public class AccountService : IAccountService
                 grpcRequest,
                 cancellationToken: cancellationToken);
 
-        var response = new AddCreator.Response(grpcResponse.AccountId);
+        var response = new AddCreatorGatewayResponse(grpcResponse.AccountId);
 
         return response;
     }
 
-    public async Task CreateSubscription(CreateSubscription.Request request, CancellationToken cancellationToken)
+    public async Task CreateSubscription(CreateSubscriptionGatewayRequest request, CancellationToken cancellationToken)
     {
         var grpcRequest = new CreateSubscriptionRequest
         {
@@ -85,7 +89,7 @@ public class AccountService : IAccountService
         return grpcResponse.Exists;
     }
 
-    public async Task<GetAccount.Response> GetAccount(long accountId, CancellationToken cancellationToken)
+    public async Task<GetAccountGatewayResponse> GetAccount(long accountId, CancellationToken cancellationToken)
     {
         var grpcRequest = new GetAccountRequest
         {
@@ -97,12 +101,14 @@ public class AccountService : IAccountService
                 grpcRequest,
                 cancellationToken: cancellationToken);
 
-        var response = new GetAccount.Response(grpcResponse.Account.ToModel());
+        var response = new GetAccountGatewayResponse(grpcResponse.Account.ToModel());
 
         return response;
     }
 
-    public async Task<GetStudentProfileData.Response> GetStudentProfileData(long accountId, CancellationToken cancellationToken)
+    public async Task<GetStudentProfileDataGatewayResponse> GetStudentProfileData(
+        long accountId,
+        CancellationToken cancellationToken)
     {
         var grpcRequest = new GetStudentProfileDataRequest
         {
@@ -114,12 +120,14 @@ public class AccountService : IAccountService
                 grpcRequest,
                 cancellationToken: cancellationToken);
 
-        var response = new GetStudentProfileData.Response(grpcResponse.StudentProfile.ToModel());
+        var response = new GetStudentProfileDataGatewayResponse(grpcResponse.StudentProfile.ToModel());
 
         return response;
     }
 
-    public async Task<GetPasswordHash.Response> GetPasswordHash(long passwordId, CancellationToken cancellationToken)
+    public async Task<GetPasswordHashGatewayResponse> GetPasswordHash(
+        long passwordId,
+        CancellationToken cancellationToken)
     {
         var grpcRequest = new GetPasswordHashRequest
         {
@@ -131,17 +139,26 @@ public class AccountService : IAccountService
                 grpcRequest,
                 cancellationToken: cancellationToken);
 
-        var response = new GetPasswordHash.Response(grpcResponse.PasswordHash);
+        var response = new GetPasswordHashGatewayResponse(grpcResponse.PasswordHash);
 
         return response;
     }
 
-    public async Task<GetAllAccounts.Response> GetAllAccounts(GetAllAccounts.Request request, CancellationToken cancellationToken)
+    public async Task<GetAllAccountsGatewayResponse> GetAllAccounts(
+        GetAllAccountsGatewayRequest request,
+        CancellationToken cancellationToken)
     {
+        var grpcIds = new GrpcIds
+        {
+            HasValue = false,
+        };
+
         var grpcRequest = new GetAllAccountsRequest
         {
             PageSize = request.PageSize,
-            Ids = request.Ids.ToGrpc(),
+            Ids = grpcIds,
+            HasRole = request.Role != null,
+            Role = request.Role?.ToGrpc() ?? Role.Unspecified,
             PageToken = request.PageToken.ToGrpc(),
         };
 
@@ -150,19 +167,26 @@ public class AccountService : IAccountService
                 grpcRequest,
                 cancellationToken: cancellationToken);
 
-        var response = new GetAllAccounts.Response(
+        var response = new GetAllAccountsGatewayResponse(
             grpcResponse.Accounts.Select(a => a.ToModel()).ToList(),
-            new PageToken(grpcResponse.PageToken.LastSeenId));
+            grpcResponse.PageToken != null ? new PageToken(grpcResponse.PageToken.LastSeenId) : null);
 
         return response;
     }
 
-    public async Task<GetAllStudentProfiles.Response> GetAllStudentProfiles(GetAllStudentProfiles.Request request, CancellationToken cancellationToken)
+    public async Task<GetAllStudentProfilesGatewayResponse> GetAllStudentProfiles(
+        GetAllStudentProfilesGatewayRequest request,
+        CancellationToken cancellationToken)
     {
+        var grpcIds = new GrpcIds
+        {
+            HasValue = false,
+        };
+
         var grpcRequest = new GetAllStudentProfilesRequest
         {
             PageSize = request.PageSize,
-            Ids = request.Ids.ToGrpc(),
+            Ids = grpcIds,
             PageToken = request.PageToken.ToGrpc(),
         };
 
@@ -171,14 +195,16 @@ public class AccountService : IAccountService
                 grpcRequest,
                 cancellationToken: cancellationToken);
 
-        var response = new GetAllStudentProfiles.Response(
+        var response = new GetAllStudentProfilesGatewayResponse(
             grpcResponse.StudentProfiles.Select(a => a.ToModel()).ToList(),
-            new PageToken(grpcResponse.PageToken.LastSeenId));
+            grpcResponse.PageToken != null ? new PageToken(grpcResponse.PageToken.LastSeenId) : null);
 
         return response;
     }
 
-    public async Task<GetFollowers.Response> GetFollowers(GetFollowers.Request request, CancellationToken cancellationToken)
+    public async Task<GetFollowersGatewayResponse> GetFollowers(
+        GetFollowersGatewayRequest request,
+        CancellationToken cancellationToken)
     {
         var grpcRequest = new GetFollowersRequest
         {
@@ -192,35 +218,33 @@ public class AccountService : IAccountService
                 grpcRequest,
                 cancellationToken: cancellationToken);
 
-        var response = new GetFollowers.Response(
+        var response = new GetFollowersGatewayResponse(
             grpcResponse.StudentProfiles.Select(a => a.ToModel()).ToList(),
-            new PageToken(grpcResponse.PageToken.LastSeenId));
+            grpcResponse.PageToken != null ? new PageToken(grpcResponse.PageToken.LastSeenId) : null);
 
         return response;
     }
 
-    public async Task<UpdateAccount.Response> UpdateAccount(UpdateAccount.Request request, CancellationToken cancellationToken)
+    public async Task UpdateAccount(UpdateAccountGatewayRequest request, CancellationToken cancellationToken)
     {
         var grpcRequest = new UpdateAccountRequest
         {
             AccountId = request.AccountId,
-            IsSetPasswordHash = request.PasswordHash.HasValue,
-            PasswordHash = request.PasswordHash.Value,
-            IsSetEmail = request.Email.HasValue,
-            Email = request.Email.Value,
+            IsSetPasswordHash = request.PasswordHash != null,
+            PasswordHash = request.PasswordHash,
+            IsSetEmail = request.Email != null,
+            Email = request.Email,
         };
 
         UpdateAccountResponse grpcResponse =
             await _userServiceClient.UpdateAccountAsync(
                 grpcRequest,
                 cancellationToken: cancellationToken);
-
-        var response = new UpdateAccount.Response();
-
-        return response;
     }
 
-    public async Task<UpdateStudentProfile.Response> UpdateStudentProfile(UpdateStudentProfile.Request request, CancellationToken cancellationToken)
+    public async Task UpdateStudentProfile(
+        UpdateStudentProfileGatewayRequest request,
+        CancellationToken cancellationToken)
     {
         var grpcRequest = new UpdateStudentProfileRequest
         {
@@ -235,9 +259,5 @@ public class AccountService : IAccountService
             await _userServiceClient.UpdateStudentProfileAsync(
                 grpcRequest,
                 cancellationToken: cancellationToken);
-
-        var response = new UpdateStudentProfile.Response();
-
-        return response;
     }
 }

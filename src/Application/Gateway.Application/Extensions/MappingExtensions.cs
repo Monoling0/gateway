@@ -1,7 +1,6 @@
 using Gateway.Application.Models.Common;
 using Gateway.Application.Models.Users;
 using GrpcAccount = Accounts.UserService.Contracts.Account;
-using GrpcIds = Accounts.UserService.Contracts.Ids;
 using GrpcPageToken = Accounts.UserService.Contracts.PageToken;
 using GrpcRole = Accounts.UserService.Contracts.Role;
 using GrpcStudentProfile = Accounts.UserService.Contracts.StudentProfile;
@@ -29,22 +28,6 @@ public static class MappingExtensions
             studentProfile.ProfilePhotoUrl);
     }
 
-    public static GrpcIds ToGrpc(this IList<long>? ids)
-    {
-        var result = new GrpcIds();
-
-        if (ids == null)
-        {
-            result.HasValue = false;
-            return result;
-        }
-
-        result.HasValue = true;
-        result.Ids_.AddRange(ids);
-
-        return result;
-    }
-
     public static GrpcPageToken? ToGrpc(this PageToken? pageToken)
     {
         return pageToken == null
@@ -61,8 +44,19 @@ public static class MappingExtensions
         {
             GrpcRole.Admin => Roles.Admin,
             GrpcRole.Creator => Roles.Creator,
-            GrpcRole.Student => Roles.Admin,
+            GrpcRole.Student => Roles.Student,
             GrpcRole.Unspecified or _ => throw new ArgumentOutOfRangeException(nameof(role), role, null),
+        };
+    }
+
+    public static GrpcRole ToGrpc(this Roles role)
+    {
+        return role switch
+        {
+            Roles.Admin => GrpcRole.Admin,
+            Roles.Creator => GrpcRole.Creator,
+            Roles.Student => GrpcRole.Student,
+            _ => GrpcRole.Unspecified,
         };
     }
 }

@@ -1,5 +1,8 @@
 using Gateway.Application.Contracts;
-using Gateway.Application.Contracts.Operations;
+using Gateway.Application.Contracts.Requests.Users;
+using Gateway.Application.Contracts.Responses.Users;
+using Gateway.Application.Models.Common;
+using Gateway.Application.Models.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -18,23 +21,23 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("students")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(RegisterStudent.Response))]
-    public async Task<ActionResult<RegisterStudent>> RegisterStudent(
-        [FromBody] RegisterStudent.Request request,
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(RegisterStudentGatewayResponse))]
+    public async Task<ActionResult<RegisterStudentGatewayResponse>> RegisterStudent(
+        [FromBody] RegisterStudentGatewayRequest request,
         CancellationToken cancellationToken)
     {
-        RegisterStudent.Response response = await _accountService.RegisterStudent(request, cancellationToken);
+        RegisterStudentGatewayResponse response = await _accountService.RegisterStudent(request, cancellationToken);
 
         return Ok(response);
     }
 
     [HttpPost("creators")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(RegisterStudent.Response))]
-    public async Task<ActionResult<RegisterStudent>> AddCreator(
-        [FromBody] AddCreator.Request request,
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(AddCreatorGatewayResponse))]
+    public async Task<ActionResult<RegisterStudentGatewayResponse>> AddCreator(
+        [FromBody] AddCreatorGatewayRequest request,
         CancellationToken cancellationToken)
     {
-        AddCreator.Response response = await _accountService.AddCreator(request, cancellationToken);
+        AddCreatorGatewayResponse response = await _accountService.AddCreator(request, cancellationToken);
 
         return Ok(response);
     }
@@ -46,15 +49,15 @@ public class UserController : ControllerBase
         [FromRoute] long followeeId,
         CancellationToken cancellationToken)
     {
-        var request = new CreateSubscription.Request(followerId, followeeId);
+        var request = new CreateSubscriptionGatewayRequest(followerId, followeeId);
         await _accountService.CreateSubscription(request, cancellationToken);
 
         return NoContent();
     }
 
-    [HttpGet("{accountId}")]
+    [HttpGet("{accountId}/exists")]
     [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(bool))]
-    public async Task<ActionResult<RegisterStudent>> ExistsAccount(
+    public async Task<ActionResult<bool>> ExistsAccount(
         [FromRoute] long accountId,
         CancellationToken cancellationToken)
     {
@@ -63,69 +66,86 @@ public class UserController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("{accountId}")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetAccount.Response))]
-    public async Task<ActionResult<GetAccount.Response>> GetAccount(
+    [HttpGet("{accountId}/data")]
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetAccountGatewayResponse))]
+    public async Task<ActionResult<GetAccountGatewayResponse>> GetAccount(
         [FromRoute] long accountId,
         CancellationToken cancellationToken)
     {
-        GetAccount.Response response = await _accountService.GetAccount(accountId, cancellationToken);
+        GetAccountGatewayResponse response = await _accountService.GetAccount(accountId, cancellationToken);
 
         return Ok(response);
     }
 
     [HttpGet("/students/{accountId}")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetStudentProfileData.Response))]
-    public async Task<ActionResult<GetStudentProfileData.Response>> GetStudentProfileData(
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetStudentProfileDataGatewayResponse))]
+    public async Task<ActionResult<GetStudentProfileDataGatewayResponse>> GetStudentProfileData(
         [FromRoute] long accountId,
         CancellationToken cancellationToken)
     {
-        GetStudentProfileData.Response
+        GetStudentProfileDataGatewayResponse
             response = await _accountService.GetStudentProfileData(accountId, cancellationToken);
 
         return Ok(response);
     }
 
     [HttpGet("/students/passwords/{passwordId}")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetStudentProfileData.Response))]
-    public async Task<ActionResult<GetStudentProfileData.Response>> GetPasswordHash(
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetStudentProfileDataGatewayResponse))]
+    public async Task<ActionResult<GetStudentProfileDataGatewayResponse>> GetPasswordHash(
         [FromRoute] long passwordId,
         CancellationToken cancellationToken)
     {
-        GetPasswordHash.Response response = await _accountService.GetPasswordHash(passwordId, cancellationToken);
+        GetPasswordHashGatewayResponse response = await _accountService.GetPasswordHash(passwordId, cancellationToken);
 
         return Ok(response);
     }
 
     [HttpGet]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetAllAccounts.Response))]
-    public async Task<ActionResult<GetAllAccounts.Response>> GetAllAccounts(
-        [FromBody] GetAllAccounts.Request request,
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetAllAccountsGatewayResponse))]
+    public async Task<ActionResult<GetAllAccountsGatewayResponse>> GetAllAccounts(
+        [FromQuery] int pageSize,
+        [FromQuery] Roles? role,
+        [FromQuery] PageToken? pageToken,
         CancellationToken cancellationToken)
     {
-        GetAllAccounts.Response response = await _accountService.GetAllAccounts(request, cancellationToken);
+        var request = new GetAllAccountsGatewayRequest(
+            pageSize,
+            role,
+            pageToken);
+        GetAllAccountsGatewayResponse response = await _accountService.GetAllAccounts(request, cancellationToken);
 
         return Ok(response);
     }
 
     [HttpGet("/students")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetAllStudentProfiles.Response))]
-    public async Task<ActionResult<GetAllStudentProfiles.Response>> GetAllStudentProfiles(
-        [FromBody] GetAllStudentProfiles.Request request,
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetAllStudentProfilesGatewayResponse))]
+    public async Task<ActionResult<GetAllStudentProfilesGatewayResponse>> GetAllStudentProfiles(
+        [FromQuery] int pageSize,
+        [FromQuery] PageToken? pageToken,
         CancellationToken cancellationToken)
     {
-        GetAllStudentProfiles.Response response = await _accountService.GetAllStudentProfiles(request, cancellationToken);
+        var request = new GetAllStudentProfilesGatewayRequest(
+            pageSize,
+            pageToken);
+        GetAllStudentProfilesGatewayResponse response =
+            await _accountService.GetAllStudentProfiles(request, cancellationToken);
 
         return Ok(response);
     }
 
-    [HttpGet("/students/followers")]
-    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetFollowers.Response))]
-    public async Task<ActionResult<GetFollowers.Response>> GetFollowers(
-        [FromBody] GetFollowers.Request request,
+    [HttpGet("/students/followers/{studentId}")]
+    [SwaggerResponse(StatusCodes.Status200OK, Type = typeof(GetFollowersGatewayResponse))]
+    public async Task<ActionResult<GetFollowersGatewayResponse>> GetFollowers(
+        [FromRoute] long studentId,
+        [FromQuery] int pageSize,
+        [FromQuery] PageToken? pageToken,
         CancellationToken cancellationToken)
     {
-        GetFollowers.Response response = await _accountService.GetFollowers(request, cancellationToken);
+        var request = new GetFollowersGatewayRequest(
+            studentId,
+            pageSize,
+            pageToken);
+        GetFollowersGatewayResponse response = await _accountService.GetFollowers(request, cancellationToken);
 
         return Ok(response);
     }
@@ -133,7 +153,7 @@ public class UserController : ControllerBase
     [HttpPut]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateAccount(
-        [FromBody] UpdateAccount.Request request,
+        [FromBody] UpdateAccountGatewayRequest request,
         CancellationToken cancellationToken)
     {
         await _accountService.UpdateAccount(request, cancellationToken);
@@ -144,7 +164,7 @@ public class UserController : ControllerBase
     [HttpPut("/students")]
     [SwaggerResponse(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateStudentProfile(
-        [FromBody] UpdateStudentProfile.Request request,
+        [FromBody] UpdateStudentProfileGatewayRequest request,
         CancellationToken cancellationToken)
     {
         await _accountService.UpdateStudentProfile(request, cancellationToken);

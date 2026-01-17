@@ -1,4 +1,7 @@
-﻿using Gateway.Extensions;
+﻿using Gateway.Application.Contracts;
+using Gateway.Application.Services;
+using Gateway.Extensions;
+using Grpc.Controllers;
 using Infrastructure.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +37,10 @@ public static class Program
 
         builder.Services.AddScoped<ExceptionFormattingMiddleware>();
 
+        builder.Services.AddSingleton<IAccountService, AccountService>();
+
         builder.Services.AddControllers()
+            .AddApplicationPart(typeof(UserController).Assembly)
             .AddJsonOptions(o =>
             {
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

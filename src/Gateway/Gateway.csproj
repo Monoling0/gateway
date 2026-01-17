@@ -14,10 +14,6 @@
     </ItemGroup>
     
     <ItemGroup>
-        <Protobuf Include="../Presentation/Grpc/protos/accounts.proto" GrpcServices="Client"/>
-    </ItemGroup>
-    
-    <ItemGroup>
       <PackageReference Include="Google.Protobuf" />
       <PackageReference Include="Grpc.AspNetCore" />
       <PackageReference Include="Grpc.Tools">
@@ -31,7 +27,10 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\Application\Gateway.Application.Contracts\Gateway.Application.Contracts.csproj" />
+      <ProjectReference Include="..\Application\Gateway.Application\Gateway.Application.csproj" />
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\Presentation\Grpc\Grpc.csproj" />
     </ItemGroup>
 
 </Project>
