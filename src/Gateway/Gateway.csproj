@@ -14,7 +14,7 @@
     </ItemGroup>
     
     <ItemGroup>
-        <Protobuf Include="../Presentation/Grpc/protos/accounts.proto" GrpcServices="Client"/>
+        <Protobuf Include="../Presentation/Grpc/protos/**/*.proto" GrpcServices="Client"/>
     </ItemGroup>
     
     <ItemGroup>
@@ -31,6 +31,7 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\Application\Gateway.Application.Contracts\Gateway.Application.Contracts.csproj" />
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 

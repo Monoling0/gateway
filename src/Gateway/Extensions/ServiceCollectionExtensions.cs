@@ -12,12 +12,12 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddEndpointsApiExplorer();
         serviceCollection.AddSwaggerGen();
-        serviceCollection.ConfigureSwaggerGen(opt =>
-        {
-            opt.UseOneOfForPolymorphism();
-            opt.SelectDiscriminatorNameUsing(_ => "$type");
-        });
 
+        // serviceCollection.ConfigureSwaggerGen(opt =>
+        // {
+        //     opt.UseOneOfForPolymorphism();
+        //     opt.SelectDiscriminatorNameUsing(_ => "$type");
+        // });
         return serviceCollection;
     }
 
