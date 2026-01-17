@@ -249,10 +249,10 @@ public class AccountService : IAccountService
         var grpcRequest = new UpdateStudentProfileRequest
         {
             AccountId = request.AccountId,
-            IsSetNickname = request.Nickname.HasValue,
-            Nickname = request.Nickname.Value,
-            IsSetProfilePhotoUrl = request.ProfilePhotoUrl.HasValue,
-            ProfilePhotoUrl = request.ProfilePhotoUrl.Value,
+            IsSetNickname = request.Nickname != null,
+            Nickname = request.Nickname,
+            IsSetProfilePhotoUrl = request.ProfilePhotoUrl != null,
+            ProfilePhotoUrl = request.ProfilePhotoUrl,
         };
 
         UpdateStudentProfileResponse grpcResponse =
